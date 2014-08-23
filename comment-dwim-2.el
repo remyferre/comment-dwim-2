@@ -19,8 +19,22 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
+;; This package add a replacement for `comment-dwim', `comment-dwim-2',
+;; which allow to comment/uncomment/insert comment/kill comment depending
+;; on the context and by using successive calls.
+
+;;; How to use:
+;;
+;; The simplest way is to enable `comment-dwim-2-mode' which bind
+;; `comment-dwim-2' to M-;
+;;
+;;   (comment-dwim-2)
+;;
+;; If you do not want this keybinding, do not use the mode and bind the
+;; command manually instead:
+;;
+;;   (global-set-key (kbd YOUR_KEY) 'comment-dwim-2)
 
 ;;; Code:
 
