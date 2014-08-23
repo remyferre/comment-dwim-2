@@ -51,6 +51,17 @@
    (should (string-equal "Foo" (buffer-substring (point-min)
 						 (point-max))))))
 
+(ert-deftest cd2/test-comment-dwim-2--empty-line ()
+  (cd2/test-setup "{\n  \n}"
+   (forward-line)
+   (comment-dwim-2) (setq last-command 'comment-dwim-2)
+   (should (string-equal "{\n  /*  */\n}" (buffer-substring (point-min)
+						      (point-max))))
+   (font-lock-fontify-buffer) (comment-dwim-2)
+   (should (string-equal "{\n  \n}"
+			 (buffer-substring (point-min)
+					   (point-max))))))
+
 (ert-deftest cd2/test-comment-dwim-2--commented-line ()
   (cd2/test-setup " 	// Foo"
    (comment-dwim-2) (setq last-command 'comment-dwim-2)
