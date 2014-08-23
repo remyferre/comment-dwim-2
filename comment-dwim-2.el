@@ -24,6 +24,45 @@
 
 ;;; Code:
 
+(defgroup comment-dwim-2 ()
+  "Customization group for comment-dwim-2 minor mode."
+  :group 'convenience)
+
+(defvar comment-dwim-2-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "M-;") 'comment-dwim-2))
+  "Keymap of comment-dwim-2 minor mode.")
+
+(defcustom comment-dwim-2-on-hook ()
+  "Hook run after `comment-dwim-2-mode' is enabled."
+  :type 'hook
+  :group 'comment-dwim-2)
+
+(defcustom comment-dwim-2-off-hook ()
+  "Hook run after `comment-dwim-2-mode' is disabled."
+  :type 'hook
+  :group 'comment-dwim-2)
+
+(define-minor-mode comment-dwim-2-mode
+  "Toggle comment-dwim-2 minor mode.
+
+This mode add a replacement for the built-in command
+`comment-dwim' named `comment-dwim-2'. Contrary to its
+predecessor, `comment-dwim-2' include more comment commands and
+allow to comment / uncomment / insert comment / kill comment
+depending on the context. The command can be repeated several
+times to switch between the different possible behaviors.
+
+With a prefix argument ARG, enable comment-dwim-2 mode if ARG is
+positive, and disable it otherwise.  If called from Lisp, enable
+the mode if ARG is omitted or nil."
+  :global t
+  :keymap comment-dwim-2-map
+  (if comment-dwim-2-mode
+      (run-hooks 'comment-dwim-2-on-hook)
+    (run-hooks 'comment-dwim-2-off-hook)))
+
+
 (defun cd2/within-comment-p (pos)
   "Returns true if content at given position is within a comment."
   (or (eq font-lock-comment-face
