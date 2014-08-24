@@ -1,4 +1,4 @@
-;;; comment-dwim-2.el --- A comment command to rule them all
+;;; comment-dwim-2.el --- An all-in-one comment command to rule them all
 
 ;; Copyright (C) 2014  Rémy Ferré
 
@@ -20,62 +20,18 @@
 
 ;;; Commentary:
 ;;
-;; This package add a replacement for `comment-dwim', `comment-dwim-2',
-;; which allow to comment/uncomment/insert comment/kill comment depending
-;; on the context and by using successive calls.
-
-;;; How to use:
+;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
+;; which include more comment commands than its predecessor and allow to
+;; comment / uncomment / insert comment / kill comment depending on the
+;; context. The command can be repeated several times to switch between the
+;; different possible behaviors.
 ;;
-;; The simplest way is to enable `comment-dwim-2-mode' which bind
-;; `comment-dwim-2' to M-;
+;; As the command is unbound, you need to set up you own keybinding first, for
+;; instance:
 ;;
-;;   (comment-dwim-2)
-;;
-;; If you do not want this keybinding, do not use the mode and bind the
-;; command manually instead:
-;;
-;;   (global-set-key (kbd YOUR_KEY) 'comment-dwim-2)
+;;   (global-set-key (kbd "M-;") 'comment-dwim-2)
 
 ;;; Code:
-
-(defgroup comment-dwim-2 ()
-  "Customization group for comment-dwim-2 minor mode."
-  :group 'convenience)
-
-(defvar comment-dwim-2-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "M-;") 'comment-dwim-2))
-  "Keymap of comment-dwim-2 minor mode.")
-
-(defcustom comment-dwim-2-on-hook ()
-  "Hook run after `comment-dwim-2-mode' is enabled."
-  :type 'hook
-  :group 'comment-dwim-2)
-
-(defcustom comment-dwim-2-off-hook ()
-  "Hook run after `comment-dwim-2-mode' is disabled."
-  :type 'hook
-  :group 'comment-dwim-2)
-
-(define-minor-mode comment-dwim-2-mode
-  "Toggle comment-dwim-2 minor mode.
-
-This mode add a replacement for the built-in command
-`comment-dwim' named `comment-dwim-2'. Contrary to its
-predecessor, `comment-dwim-2' include more comment commands and
-allow to comment / uncomment / insert comment / kill comment
-depending on the context. The command can be repeated several
-times to switch between the different possible behaviors.
-
-With a prefix argument ARG, enable comment-dwim-2 mode if ARG is
-positive, and disable it otherwise.  If called from Lisp, enable
-the mode if ARG is omitted or nil."
-  :global t
-  :keymap comment-dwim-2-map
-  (if comment-dwim-2-mode
-      (run-hooks 'comment-dwim-2-on-hook)
-    (run-hooks 'comment-dwim-2-off-hook)))
-
 
 (defun cd2/empty-line-p ()
   "Return true if current line contains only whitespace characters."
