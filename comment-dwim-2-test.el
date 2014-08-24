@@ -14,6 +14,8 @@
        (goto-char (point-min))
        ,@body)))
 
+(defun should-point (pos)
+  (should (= pos (point))))
 
 (ert-deftest cd2/test-line-contains-comment-p ()
   (cd2/test-setup "Foo //"     	  (should (cd2/line-contains-comment-p)))
@@ -35,7 +37,9 @@
   (cd2/test-setup "\"Foo\nBar\""
    (should (cd2/line-ends-with-multiline-string-p))
    (forward-line)
-   (should (not (cd2/line-ends-with-multiline-string-p)))))
+   (should (not (cd2/line-ends-with-multiline-string-p))))
+  (cd2/test-setup " \"Foo\nBar\""
+   (should (cd2/line-ends-with-multiline-string-p))))
 
 
 (ert-deftest cd2/test-comment-dwim-2--uncommented-line ()
@@ -105,19 +109,22 @@
 
 (ert-deftest cd2/test-comment-dwim-2--multiline-string ()
   (cd2/test-setup "\"Foo\nBar\""
+   (forward-char 3) (should-point 4)
    (comment-dwim-2) (setq last-command 'comment-dwim-2)
    (should (string-equal "/* \"Foo */\nBar\"" (buffer-substring (point-min)
-								(point-max))))
+								 (point-max))))
+   (should-point 7)
    (font-lock-fontify-buffer) (comment-dwim-2)
    (should (string-equal "\"Foo\nBar\""
-			 (buffer-substring (point-min)
-					   (point-max)))))
+   			 (buffer-substring (point-min)
+   					   (point-max))))
+  (should-point 4))
   (cd2/test-setup "\"Foo\nBar\""
    (forward-line)
    (comment-dwim-2) (setq last-command 'comment-dwim-2)
    (should (string-equal "\"Foo\n/* Bar\" */" (buffer-substring (point-min)
-								(point-max))))
+  								(point-max))))
    (font-lock-fontify-buffer) (comment-dwim-2)
    (should (string-equal "\"Foo\nBar\"				/*  */"
-			 (buffer-substring (point-min)
-					   (point-max))))))
+  			 (buffer-substring (point-min)
+  					   (point-max))))))

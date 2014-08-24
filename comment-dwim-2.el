@@ -34,7 +34,8 @@
 ;;; Code:
 
 (defun cd2/empty-line-p ()
-  "Return true if current line contains only whitespace characters."
+  "Return true if current line contains only whitespace
+characters."
   (string-match "^[[:blank:]]*$"
 		(buffer-substring (line-beginning-position)
 				  (line-end-position))))
@@ -59,23 +60,18 @@
 (defun cd2/line-ends-with-multiline-string-p ()
   "Return true if current line ends inside a multiline string such
 that adding an end of line comment is meaningless."
-  (and
-   ;; End of line have string face..
-   (progn
-     (font-lock-fontify-region (line-beginning-position) (line-end-position))
-     (or (eq font-lock-string-face
-	     (get-text-property (line-end-position) 'face))
-	 (eq font-lock-doc-face
-	     (get-text-property (line-end-position) 'face))))
-   ;; ..and next line contains a string which begins at the same position
-   (eq (elt (save-excursion (syntax-ppss
-			     ;; Move one character forward if point is on quote
-			     ;; (needed by `syntax-ppss')
-			     (if (or (elt (syntax-ppss (point)) 3)
-			     	     (eq (point) (point-max)))
-			     	 (point)
-			       (1+ (point))))) 8)
-       (elt (save-excursion (syntax-ppss (line-beginning-position 2))) 8))))
+  (let ((bol  (line-beginning-position))
+	(eol  (line-end-position))
+	(bol2 (line-beginning-position 2)))
+    (and
+     ;; End of line have string face..
+     (save-excursion
+       (font-lock-fontify-region bol eol)
+       (or (eq font-lock-string-face (get-text-property eol 'face))
+	   (eq font-lock-doc-face    (get-text-property eol 'face))))
+     ;; ..and next line contains a string which begins at the same position
+     (= (elt (save-excursion (syntax-ppss eol )) 8)
+	(elt (save-excursion (syntax-ppss bol2)) 8)))))
 
 (defun cd2/comment-line ()
   "Comment current line."
