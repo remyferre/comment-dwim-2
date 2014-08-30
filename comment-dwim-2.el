@@ -61,7 +61,7 @@ characters."
 
 (defun cd2/line-ends-with-multiline-string-p ()
   "Return true if current line ends inside a multiline string such
-that adding an end of line comment is meaningless."
+that adding an end-of-line comment is meaningless."
   (let ((bol  (line-beginning-position))
 	(eol  (line-end-position))
 	(bol2 (line-beginning-position 2)))
@@ -74,6 +74,23 @@ that adding an end of line comment is meaningless."
      ;; ..and next line contains a string which begins at the same position
      (= (elt (save-excursion (syntax-ppss eol )) 8)
 	(elt (save-excursion (syntax-ppss bol2)) 8)))))
+
+(defun cd2/beginning-of-end-of-line-comment ()
+  "Return beginning position of current line end-of-line comment,
+or nil if there is none."
+  (save-excursion
+    (move-end-of-line 1)
+    (forward-char -1)
+    (if (not (cd2/within-comment-p (point)))
+	nil
+      (while (and (not (= (line-beginning-position) (point)))
+		  (cd2/within-comment-p (point)))
+	(forward-char -1))
+      (forward-char 1)
+      (while (eq font-lock-comment-delimiter-face
+		 (get-text-property (point) 'face))
+	(forward-char 1))
+      (point))))
 
 (defun cd2/comment-line ()
   "Comment current line."
@@ -107,7 +124,9 @@ If the line is already commented, uncomment it first."
 	  (when (and (eq last-command 'comment-dwim-2)
 		     (not (cd2/empty-line-p))
 		     (not (cd2/line-ends-with-multiline-string-p)))
-	    (comment-dwim nil))) ; Add comment at end of line
+	    (let ((boc (cd2/beginning-of-end-of-line-comment)))
+	      (if boc (goto-char boc)
+		(comment-dwim nil))))) ; Add comment at end of line
       (if (and (cd2/line-contains-comment-p)
 	       (eq last-command 'comment-dwim-2))
 	  (comment-kill nil)
