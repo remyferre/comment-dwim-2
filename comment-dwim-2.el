@@ -92,6 +92,22 @@ or nil if there is none."
 	(forward-char 1))
       (point))))
 
+(defun cd2/comment-kill (arg)
+  "A clone of `comment-kill' which does not re-indent the code."
+  (interactive "P")
+  (comment-normalize-vars)
+  (dotimes (_i (prefix-numeric-value arg))
+    (save-excursion
+      (beginning-of-line)
+      (let ((cs (comment-search-forward (line-end-position) t)))
+	(when cs
+	  (goto-char cs)
+	  (skip-syntax-backward " ")
+	  (setq cs (point))
+	  (comment-forward)
+	  (kill-region cs (if (bolp) (1- (point)) (point))))))
+    (if arg (forward-line 1))))
+
 (defun cd2/comment-line ()
   "Comment current line."
   ;; `comment-region' does not support empty lines, so we use
@@ -129,7 +145,7 @@ If the line is already commented, uncomment it first."
 		(comment-dwim nil))))) ; Add comment at end of line
       (if (and (cd2/line-contains-comment-p)
 	       (eq last-command 'comment-dwim-2))
-	  (comment-kill nil)
+	  (cd2/comment-kill nil)
 	(cd2/comment-line)))))
 
 (provide 'comment-dwim-2)
