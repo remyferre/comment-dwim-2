@@ -75,23 +75,6 @@ that adding an end-of-line comment is meaningless."
      (= (elt (save-excursion (syntax-ppss eol )) 8)
 	(elt (save-excursion (syntax-ppss bol2)) 8)))))
 
-(defun cd2/beginning-of-end-of-line-comment ()
-  "Return beginning position of current line end-of-line comment,
-or nil if there is none."
-  (save-excursion
-    (move-end-of-line 1)
-    (forward-char -1)
-    (if (not (cd2/within-comment-p (point)))
-	nil
-      (while (and (not (= (line-beginning-position) (point)))
-		  (cd2/within-comment-p (point)))
-	(forward-char -1))
-      (forward-char 1)
-      (while (eq font-lock-comment-delimiter-face
-		 (get-text-property (point) 'face))
-	(forward-char 1))
-      (point))))
-
 (defun cd2/comment-kill (arg)
   "A clone of `comment-kill' which does not re-indent the code."
   (interactive "P")
@@ -140,9 +123,9 @@ If the line is already commented, uncomment it first."
 	  (when (and (eq last-command 'comment-dwim-2)
 		     (not (cd2/empty-line-p))
 		     (not (cd2/line-ends-with-multiline-string-p)))
-	    (let ((boc (cd2/beginning-of-end-of-line-comment)))
-	      (if boc (goto-char boc)
-		(comment-dwim nil))))) ; Add comment at end of line
+	    (if (cd2/line-contains-comment-p)
+		(cd2/comment-kill nil)
+	      (comment-dwim nil)))) ; Add comment at end of line
       (if (and (cd2/line-contains-comment-p)
 	       (eq last-command 'comment-dwim-2))
 	  (cd2/comment-kill nil)
