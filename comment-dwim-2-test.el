@@ -26,6 +26,15 @@
   (cd2/test-setup "/* Foo */"     (should (cd2/line-contains-comment-p)))
   (cd2/test-setup "Foo"           (should (not (cd2/line-contains-comment-p)))))
 
+(ert-deftest cd2/test-fully-commented-line-p ()
+  (cd2/test-setup "// Foo"         (should (cd2/fully-commented-line-p)))
+  (cd2/test-setup "/* Foo */"      (should (cd2/fully-commented-line-p)))
+  (cd2/test-setup " 	// Foo"    (should (cd2/fully-commented-line-p)))
+  (cd2/test-setup " 	/* Foo */" (should (cd2/fully-commented-line-p)))
+  (cd2/test-setup "Bar // Foo"     (should (not (cd2/fully-commented-line-p))))
+  (cd2/test-setup "/* Foo */ Bar"  (should (not (cd2/fully-commented-line-p))))
+  (cd2/test-setup "Bar"            (should (not (cd2/fully-commented-line-p)))))
+
 (ert-deftest cd2/test-line-ends-with-multiline-comment-p ()
   (cd2/test-setup "\"Foo\""
    (should (not (cd2/line-ends-with-multiline-string-p))))
@@ -118,8 +127,21 @@
    (forward-line)
    (comment-dwim-2) (setq last-command 'comment-dwim-2)
    (should (string-equal "\"Foo\n/* Bar\" */\n" (buffer-substring (point-min)
-  								(point-max))))
+								  (point-max))))
    (font-lock-fontify-buffer) (comment-dwim-2)
    (should (string-equal "\"Foo\nBar\"				/*  */\n"
   			 (buffer-substring (point-min)
   					   (point-max))))))
+
+(ert-deftest cd2/test-nested-commented-line ()
+  (cd2/test-setup "// // // Foo\n"
+   (comment-dwim-2) (setq last-command 'comment-dwim-2)
+   (should (string-equal "// // Foo\n" (buffer-substring (point-min)
+							 (point-max))))
+   (comment-dwim-2)
+   (should (string-equal "// Foo\n" (buffer-substring (point-min)
+						      (point-max))))
+   (comment-dwim-2)
+   (should (string-equal "Foo				/*  */\n"
+			 (buffer-substring (point-min)
+					   (point-max))))))

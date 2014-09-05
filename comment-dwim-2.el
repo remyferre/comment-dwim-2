@@ -42,6 +42,17 @@ characters."
 		(buffer-substring (line-beginning-position)
 				  (line-end-position))))
 
+(defun cd2/fully-commented-line-p ()
+  "Returns true if current line is commented from its beginning.
+Whitespace characters at the beginning of the line are ignored."
+  (interactive)
+  (and (not (cd2/empty-line-p))
+       (comment-only-p (save-excursion
+		    (move-beginning-of-line 1)
+		    (skip-chars-forward " \t")
+		    (point))
+		  (line-end-position))))
+
 (defun cd2/within-comment-p (pos)
   "Returns true if content at given position is within a comment."
   (or (eq font-lock-comment-face
@@ -91,6 +102,10 @@ that adding an end-of-line comment is meaningless."
 	  (kill-region cs (if (bolp) (1- (point)) (point))))))
     (if arg (forward-line 1))))
 
+(defun cd2/uncomment-line ()
+  "Uncomment current line."
+  (uncomment-region (line-beginning-position) (line-end-position)))
+
 (defun cd2/comment-line ()
   "Comment current line."
   ;; `comment-region' does not support empty lines, so we use
@@ -112,17 +127,13 @@ If the line is already commented, uncomment it first."
   (interactive)
   (if mark-active
       (comment-or-uncomment-region (region-beginning) (region-end))
-    (if (and (not (cd2/empty-line-p))
-	     (comment-only-p (save-excursion
-			       (move-beginning-of-line 1)
-			       (skip-chars-forward " \t")
-			       (point))
-			     (line-end-position)))
+    (if (cd2/fully-commented-line-p)
 	(progn
-	  (uncomment-region (line-beginning-position) (line-end-position))
+	  (cd2/uncomment-line)
 	  (when (and (eq last-command 'comment-dwim-2)
 		     (not (cd2/empty-line-p))
-		     (not (cd2/line-ends-with-multiline-string-p)))
+		     (not (cd2/line-ends-with-multiline-string-p))
+		     (not (cd2/fully-commented-line-p)))
 	    (if (cd2/line-contains-comment-p)
 		(cd2/comment-kill nil)
 	      (comment-dwim nil)))) ; Add comment at end of line
