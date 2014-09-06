@@ -88,7 +88,6 @@ that adding an end-of-line comment is meaningless."
 
 (defun cd2/comment-kill (arg)
   "A clone of `comment-kill' which does not re-indent the code."
-  (interactive "P")
   (comment-normalize-vars)
   (dotimes (_i (prefix-numeric-value arg))
     (save-excursion
