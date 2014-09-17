@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Rémy Ferré
 
 ;; Author: Rémy Ferré <remy-ferre@laposte.net>
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
@@ -22,18 +22,46 @@
 
 ;;; Commentary:
 ;;
-;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
-;; which include more comment commands than its predecessor and allow to
-;; comment / uncomment / insert comment / kill comment depending on the
-;; context. The command can be repeated several times to switch between the
-;; different possible behaviors.
+;; # Description
 ;;
-;; As the command is unbound, you need to set up you own keybinding first, for
-;; instance:
+;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
+;; which includes more comment commands than its predecessor and allows to
+;; comment / uncomment / insert comment / kill comment / indent comment /
+;; depending on the context. The command can be repeated several times to
+;; switch between the different possible behaviors.
+;;
+;; # How to use
+;;
+;; As the command is unbound, you need to set up you own keybinding first,
+;; for instance:
 ;;
 ;;   (global-set-key (kbd "M-;") 'comment-dwim-2)
+;;
+;; # Customization
+;;
+;; Contrary to `comment-dwim', `comment-dwim-2' will by default kill an
+;; inline comment if it encounters one when being repeated. If you prefer
+;; the `comment-dwim' behavior (which is to reindent the inline comment),
+;; set comment-dwim-2--inline-comment-behavior to 'reindent-comment.
+;;
+;;   (setq comment-dwim-2--inline-comment-behavior 'reindent-comment)
 
 ;;; Code:
+
+(defvar comment-dwim-2--inline-comment-behavior 'kill-comment
+  "Behavior of `comment-dwim-2' when it is being repeated and is
+encountering an inline comment. Possible values are:
+
+* 'kill-comment     : Kill the inline comment (default)
+* 'reindent-comment : Reindent the inline comment")
+
+(defun cd2/inline-comment-function ()
+  "Function called by `comment-dwim-2' when it is being repeated
+and is encountering an inline comment. The behavior depends on
+the value of `comment-dwim-2--inline-comment-behavior'"
+  (case comment-dwim-2--inline-comment-behavior
+    ('kill-comment     (cd2/comment-kill))
+    ('reindent-comment (comment-indent))))
 
 (defun cd2/empty-line-p ()
   "Return true if current line contains only whitespace
@@ -86,20 +114,19 @@ that adding an end-of-line comment is meaningless."
      (= (elt (save-excursion (syntax-ppss eol )) 8)
 	(elt (save-excursion (syntax-ppss bol2)) 8)))))
 
-(defun cd2/comment-kill (arg)
-  "A clone of `comment-kill' which does not re-indent the code."
+(defun cd2/comment-kill ()
+  "A clone of `comment-kill' which kills only one comment and
+does not re-indent the code."
   (comment-normalize-vars)
-  (dotimes (_i (prefix-numeric-value arg))
-    (save-excursion
-      (beginning-of-line)
-      (let ((cs (comment-search-forward (line-end-position) t)))
-	(when cs
-	  (goto-char cs)
-	  (skip-syntax-backward " ")
-	  (setq cs (point))
-	  (comment-forward)
-	  (kill-region cs (if (bolp) (1- (point)) (point))))))
-    (if arg (forward-line 1))))
+  (save-excursion
+    (beginning-of-line)
+    (let ((cs (comment-search-forward (line-end-position) t)))
+      (when cs
+	(goto-char cs)
+	(skip-syntax-backward " ")
+	(setq cs (point))
+	(comment-forward)
+	(kill-region cs (if (bolp) (1- (point)) (point)))))))
 
 (defun cd2/uncomment-line ()
   "Uncomment current line."
@@ -122,7 +149,11 @@ Else, the function applies to the current line and calls a
 different function at each successive call. If the line is not
 commented, the behavior is:
 comment line -> add end-of-line comment -> restore initial state.
-If the line is already commented, uncomment it first."
+If the line is already commented, uncomment it first.
+
+Please note that the behavior of `comment-dwim-2' when
+encountering an inline comment can be customized. See
+`comment-dwim-2--inline-comment-behavior' for more information."
   (interactive)
   (if mark-active
       (comment-or-uncomment-region (region-beginning) (region-end))
@@ -134,11 +165,11 @@ If the line is already commented, uncomment it first."
 		     (not (cd2/line-ends-with-multiline-string-p))
 		     (not (cd2/fully-commented-line-p)))
 	    (if (cd2/line-contains-comment-p)
-		(cd2/comment-kill nil)
+		(cd2/inline-comment-function)
 	      (comment-dwim nil)))) ; Add comment at end of line
       (if (and (cd2/line-contains-comment-p)
 	       (eq last-command 'comment-dwim-2))
-	  (cd2/comment-kill nil)
+	  (cd2/inline-comment-function)
 	(cd2/comment-line)))))
 
 (provide 'comment-dwim-2)
