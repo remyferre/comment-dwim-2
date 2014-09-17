@@ -61,7 +61,8 @@ and is encountering an inline comment. The behavior depends on
 the value of `comment-dwim-2--inline-comment-behavior'"
   (case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
-    ('reindent-comment (comment-indent))))
+    ('reindent-comment (comment-indent))
+    (t (user-error "Error: `comment-dwim-2--inline-comment-behavior' has an unknown value. Probably a typo."))))
 
 (defun cd2/empty-line-p ()
   "Return true if current line contains only whitespace

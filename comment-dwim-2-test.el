@@ -159,3 +159,12 @@
    (comment-dwim-2) (should-buffer "// // Foo\n")
    (comment-dwim-2) (should-buffer "// Foo\n")
    (comment-dwim-2) (should-buffer "Foo				/*  */\n")))
+
+;; comment-dwim-2--inline-comment-behavior == 'wrong-value
+
+(ert-deftest cd2/test-comment-dwim-2--uncommented-line--with-wrong-value ()
+  (cd2/test-setup "Foo\n"
+   (setq comment-dwim-2--inline-comment-behavior 'wrong-value)
+   (comment-dwim-2) (should-buffer "/* Foo */\n")
+   (comment-dwim-2) (should-buffer "Foo				/*  */\n")
+   (should-error (comment-dwim-2))))
