@@ -114,6 +114,10 @@
    (comment-dwim-2) (should-buffer "// Foo\n")
    (comment-dwim-2) (should-buffer "Foo				/*  */\n")))
 
+(ert-deftest cd2/test-comment-dwim-2--prefix-argument ()
+  (cd2/test-setup "Foo // Bar\n"
+   (comment-dwim-2 4) (should-buffer "Foo				// Bar\n")))
+
 ;; comment-dwim-2--inline-comment-behavior == 'reindent-comment
 
 (ert-deftest cd2/test-comment-dwim-2--uncommented-line--with-reindent ()
@@ -160,6 +164,10 @@
    (comment-dwim-2) (should-buffer "// Foo\n")
    (comment-dwim-2) (should-buffer "Foo				/*  */\n")))
 
+(ert-deftest cd2/test-comment-dwim-2--prefix-argument--with-reindent ()
+  (cd2/test-setup--with-reindent "Foo // Bar\n"
+   (comment-dwim-2 4) (should-buffer "Foo\n")))
+
 ;; comment-dwim-2--inline-comment-behavior == 'wrong-value
 
 (ert-deftest cd2/test-comment-dwim-2--uncommented-line--with-wrong-value ()
@@ -168,3 +176,8 @@
    (comment-dwim-2) (should-buffer "/* Foo */\n")
    (comment-dwim-2) (should-buffer "Foo				/*  */\n")
    (should-error (comment-dwim-2))))
+
+(ert-deftest cd2/test-comment-dwim-2--prefix-argument--with-wrong-value ()
+  (cd2/test-setup "Foo // Bar\n"
+   (setq comment-dwim-2--inline-comment-behavior 'wrong-value)
+   (should-error (comment-dwim-2 4))))

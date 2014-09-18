@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Rémy Ferré
 
 ;; Author: Rémy Ferré <remy-ferre@laposte.net>
-;; Version: 1.1.0
+;; Version: 1.2.0
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
@@ -45,6 +45,10 @@
 ;; set comment-dwim-2--inline-comment-behavior to 'reindent-comment.
 ;;
 ;;   (setq comment-dwim-2--inline-comment-behavior 'reindent-comment)
+;;
+;; Whatever you choose between killing or reindenting, the other behavior
+;; is still made available by calling `comment-dwim-2' with a prefix
+;; argument.
 
 ;;; Code:
 
@@ -53,7 +57,15 @@
 encountering an inline comment. Possible values are:
 
 * 'kill-comment     : Kill the inline comment (default)
-* 'reindent-comment : Reindent the inline comment")
+* 'reindent-comment : Reindent the inline comment
+
+When a behavior is chosen, the other one is still made available
+by calling `comment-dwim-2' with a prefix argument.")
+
+(defvar cd2/inline-comment-behavior--wrong-value
+  "Error: `comment-dwim-2--inline-comment-behavior' has an unknown value. Probably a typo."
+  "Error message displayed when
+`comment-dwim-2--inline-comment-behavior' is set to a wrong value")
 
 (defun cd2/inline-comment-function ()
   "Function called by `comment-dwim-2' when it is being repeated
@@ -62,7 +74,17 @@ the value of `comment-dwim-2--inline-comment-behavior'"
   (case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
     ('reindent-comment (comment-indent))
-    (t (user-error "Error: `comment-dwim-2--inline-comment-behavior' has an unknown value. Probably a typo."))))
+    (t (user-error cd2/inline-comment-behavior--wrong-value))))
+
+(defun cd2/prefix-function ()
+  "Function called by `comment-dwim-2' when it is called with a
+prefix argument. The behavior is the one not chosen by the user
+in `comment-dwim-2--inline-comment-behavior' so it can still be
+available."
+  (case comment-dwim-2--inline-comment-behavior
+    ('kill-comment     (comment-indent))
+    ('reindent-comment (cd2/comment-kill))
+    (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/empty-line-p ()
   "Return true if current line contains only whitespace
@@ -142,36 +164,41 @@ does not re-indent the code."
     (comment-region (line-beginning-position) (line-end-position))))
 
 ;;;###autoload
-(defun comment-dwim-2 ()
+(defun comment-dwim-2 (&optional arg)
   "Call a comment command according to the context.
+
 If the region is active, call `comment-or-uncomment-region' to
 toggle comments.
 Else, the function applies to the current line and calls a
-different function at each successive call. If the line is not
-commented, the behavior is:
-comment line -> add end-of-line comment -> restore initial state.
-If the line is already commented, uncomment it first.
+different function at each successive call. The behavior is:
+* First  call : Toggle line commenting
+* Second call : - Kill inline comment if one is present (1)
+                - Insert inline comment otherwise
+Given an argument, it reindents the inline comment instead (2).
 
 Please note that the behavior of `comment-dwim-2' when
-encountering an inline comment can be customized. See
-`comment-dwim-2--inline-comment-behavior' for more information."
-  (interactive)
+encountering an inline comment can be customized. Setting
+`comment-dwim-2--inline-comment-behavior' to 'reindent-comment
+will swap (1) and (2)."
+  (interactive "P")
   (if mark-active
       (comment-or-uncomment-region (region-beginning) (region-end))
-    (if (cd2/fully-commented-line-p)
-	(progn
-	  (cd2/uncomment-line)
-	  (when (and (eq last-command 'comment-dwim-2)
-		     (not (cd2/empty-line-p))
-		     (not (cd2/line-ends-with-multiline-string-p))
-		     (not (cd2/fully-commented-line-p)))
-	    (if (cd2/line-contains-comment-p)
-		(cd2/inline-comment-function)
-	      (comment-dwim nil)))) ; Add comment at end of line
-      (if (and (cd2/line-contains-comment-p)
-	       (eq last-command 'comment-dwim-2))
-	  (cd2/inline-comment-function)
-	(cd2/comment-line)))))
+    (if arg
+	(cd2/prefix-function)
+      (if (cd2/fully-commented-line-p)
+	  (progn
+	    (cd2/uncomment-line)
+	    (when (and (eq last-command 'comment-dwim-2)
+		       (not (cd2/empty-line-p))
+		       (not (cd2/line-ends-with-multiline-string-p))
+		       (not (cd2/fully-commented-line-p)))
+	      (if (cd2/line-contains-comment-p)
+		  (cd2/inline-comment-function)
+		(comment-dwim nil)))) ; Add comment at end of line
+	(if (and (cd2/line-contains-comment-p)
+		 (eq last-command 'comment-dwim-2))
+	    (cd2/inline-comment-function)
+	  (cd2/comment-line))))))
 
 (provide 'comment-dwim-2)
 ;;; comment-dwim-2.el ends here
