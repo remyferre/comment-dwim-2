@@ -26,7 +26,7 @@
 ;;
 ;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
 ;; which includes more comment commands than its predecessor and allows to
-;; comment / uncomment / insert comment / kill comment / indent comment /
+;; comment / uncomment / insert comment / kill comment / indent comment
 ;; depending on the context. The command can be repeated several times to
 ;; switch between the different possible behaviors.
 ;;
@@ -194,7 +194,7 @@ will swap (1) and (2)."
 		       (not (cd2/fully-commented-line-p)))
 	      (if (cd2/line-contains-comment-p)
 		  (cd2/inline-comment-function)
-		(comment-dwim nil)))) ; Add comment at end of line
+		(comment-indent)))) ; Insert inline comment
 	(if (and (cd2/line-contains-comment-p)
 		 (eq last-command 'comment-dwim-2))
 	    (cd2/inline-comment-function)

@@ -23,7 +23,7 @@
     ,@body))
 
 (defun should-buffer (str)
-  (should (string-equal str (buffer-substring (point-min) (point-max)))))
+  (should (string-equal str (buffer-substring-no-properties (point-min) (point-max)))))
 
 (defadvice comment-dwim-2 (around test-advice activate)
   (font-lock-fontify-buffer)
