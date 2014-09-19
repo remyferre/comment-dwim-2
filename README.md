@@ -3,8 +3,9 @@
 `comment-dwim-2` is a replacement for the Emacs built-in command `comment-dwim` which includes more comment features, including:
 
 * commenting/uncommenting the current line (or region, if active)
-* inserting an end-of-line comment
-* killing the end-of-line comment
+* inserting an inline comment
+* killing the inline comment
+* reindenting the inline comment
 
 As its name suggests, `comment-dwim-2` picks up one behavior depending on the context but contrary to `comment-dwim` **can also be repeated several times to switch between the different behaviors**.
 
@@ -34,10 +35,22 @@ As its name suggests, `comment-dwim-2` picks up one behavior depending on the co
 
 ![uncommenting current line with comment-dwim-2](http://remyferre.github.io/images/cd2-uncomment.gif)
 
-## Insert comment
+## Insert comment (repeated twice)
 
 ![inserting comment with comment-dwim-2](http://remyferre.github.io/images/cd2-insert-comment.gif)
 
-## Kill comment
+## Kill comment (repeated twice)
 
 ![killing comment with comment-dwim-2](http://remyferre.github.io/images/cd2-kill-comment.gif)
+
+## Reindent comment (called with a prefix argument)
+
+![reindenting comment with comment-dwim-2](http://remyferre.github.io/images/cd2-reindent-comment.gif)
+
+# Customization
+
+An alternative behavior closer to what `comment-dwim` does is available. To use it, add this to your init file:
+
+	(setq comment-dwim-2--inline-comment-behavior 'reindent-comment)
+
+It basically swaps the killing and reindenting behavior, which means that repeating `comment-dwim-2` will by default reindent the comment instead of killing it, and that calling `comment-dwim-2` with a prefix argument will kill the comment instead of reindenting it.

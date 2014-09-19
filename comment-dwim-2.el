@@ -30,6 +30,11 @@
 ;; depending on the context. The command can be repeated several times to
 ;; switch between the different possible behaviors.
 ;;
+;; # Demonstration
+;;
+;; Go to the github page to see an animated demonstration of the command.
+;; https://github.com/remyferre/comment-dwim-2
+;;
 ;; # How to use
 ;;
 ;; As the command is unbound, you need to set up you own keybinding first,
