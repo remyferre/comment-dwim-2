@@ -186,7 +186,7 @@ encountering an inline comment can be customized. Setting
 `comment-dwim-2--inline-comment-behavior' to 'reindent-comment
 will swap (1) and (2)."
   (interactive "P")
-  (if mark-active
+  (if (use-region-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
     (if arg
 	(cd2/prefix-function)
