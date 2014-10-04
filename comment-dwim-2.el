@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Rémy Ferré
 
 ;; Author: Rémy Ferré <remy-ferre@laposte.net>
-;; Version: 1.2.0
+;; Version: 1.2.1
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
