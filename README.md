@@ -21,6 +21,10 @@ As its name suggests, `comment-dwim-2` picks up one behavior depending on the co
 
     (global-set-key (kbd "M-;") 'comment-dwim-2)
 
+# Installation
+
+This package can be installed from [MELPA](http://melpa.milkbox.net/#/).
+
 # Detailed use cases
 
 ## Commenting/uncommenting the region
