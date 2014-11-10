@@ -1,6 +1,6 @@
 # Comment-dwim-2
 
-`comment-dwim-2` is a replacement for the Emacs built-in command `comment-dwim` which includes more comment features, including:
+`comment-dwim-2` is a replacement for the Emacs' built-in command `comment-dwim` which includes more comment features, including:
 
 * commenting/uncommenting the current line (or region, if active)
 * inserting an inline comment
@@ -23,7 +23,7 @@ As its name suggests, `comment-dwim-2` picks up one behavior depending on the co
 
 # Installation
 
-This package can be installed from [MELPA](http://melpa.milkbox.net/#/).
+This package can be installed from [MELPA](http://melpa.org/#/).
 
 # Detailed use cases
 
