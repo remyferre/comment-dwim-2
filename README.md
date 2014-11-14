@@ -7,7 +7,7 @@
 * killing the inline comment
 * reindenting the inline comment
 
-As its name suggests, `comment-dwim-2` picks up one behavior depending on the context but contrary to `comment-dwim` **can also be repeated several times to switch between the different behaviors**.
+As its name suggests, `comment-dwim-2` picks one behavior depending on the context but contrary to `comment-dwim` **can also be repeated several times to switch between the different behaviors**.
 
 # Demo
 
