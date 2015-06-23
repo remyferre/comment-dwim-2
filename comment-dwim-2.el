@@ -1,8 +1,8 @@
 ;;; comment-dwim-2.el --- An all-in-one comment command to rule them all
 
-;; Copyright (C) 2014  Rémy Ferré
+;; Copyright (C) 2014-2015  Rémy Ferré
 
-;; Author: Rémy Ferré <remy-ferre@laposte.net>
+;; Author: Rémy Ferré <dev@remyferre.net>
 ;; Version: 1.2.1
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
