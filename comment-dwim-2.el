@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014-2015  Rémy Ferré
 
 ;; Author: Rémy Ferré <dev@remyferre.net>
-;; Version: 1.2.1
+;; Version: 1.2.2
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
@@ -57,6 +57,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defvar comment-dwim-2--inline-comment-behavior 'kill-comment
   "Behavior of `comment-dwim-2' when it is being repeated and is
 encountering an inline comment. Possible values are:
@@ -76,7 +78,7 @@ by calling `comment-dwim-2' with a prefix argument.")
   "Function called by `comment-dwim-2' when it is being repeated
 and is encountering an inline comment. The behavior depends on
 the value of `comment-dwim-2--inline-comment-behavior'"
-  (case comment-dwim-2--inline-comment-behavior
+  (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
     ('reindent-comment (comment-indent))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
@@ -86,7 +88,7 @@ the value of `comment-dwim-2--inline-comment-behavior'"
 prefix argument. The behavior is the one not chosen by the user
 in `comment-dwim-2--inline-comment-behavior' so it can still be
 available."
-  (case comment-dwim-2--inline-comment-behavior
+  (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (comment-indent))
     ('reindent-comment (cd2/comment-kill))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
