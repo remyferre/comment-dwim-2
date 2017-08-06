@@ -101,25 +101,25 @@ characters."
 				  (line-end-position))))
 
 (defun cd2/fully-commented-line-p ()
-  "Returns true if current line is commented from its beginning.
+  "Return true if current line is commented from its beginning.
 Whitespace characters at the beginning of the line are ignored."
   (interactive)
   (and (not (cd2/empty-line-p))
        (comment-only-p (save-excursion
-		    (move-beginning-of-line 1)
-		    (skip-chars-forward " \t")
-		    (point))
-		  (line-end-position))))
+			 (move-beginning-of-line 1)
+			 (skip-chars-forward " \t")
+			 (point))
+		       (line-end-position))))
 
 (defun cd2/within-comment-p (pos)
-  "Returns true if content at given position is within a comment."
+  "Return true if content at given position is within a comment."
   (or (eq font-lock-comment-face
 	  (get-text-property pos 'face))
       (eq font-lock-comment-delimiter-face
 	  (get-text-property pos 'face))))
 
 (defun cd2/line-contains-comment-p ()
-  "Returns true if current line contains a comment."
+  "Return true if current line contains a comment."
   (let ((eol (line-end-position)))
     (save-excursion
       (move-beginning-of-line 1)
