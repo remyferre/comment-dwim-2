@@ -60,8 +60,8 @@
 (require 'cl-lib)
 
 (defvar comment-dwim-2--inline-comment-behavior 'kill-comment
-  "Behavior of `comment-dwim-2' when it is being repeated and is
-encountering an inline comment.  Possible values are:
+  "Behavior of `comment-dwim-2' when repeated and at an inline comment.
+Possible values are:
 
 * 'kill-comment     : Kill the inline comment (default)
 * 'reindent-comment : Reindent the inline comment
@@ -71,22 +71,20 @@ by calling `comment-dwim-2' with a prefix argument.")
 
 (defvar cd2/inline-comment-behavior--wrong-value
   "Error: `comment-dwim-2--inline-comment-behavior' has an unknown value. Probably a typo."
-  "Error message displayed when
-`comment-dwim-2--inline-comment-behavior' is set to a wrong value")
+  "Error message displayed when `comment-dwim-2--inline-comment-behavior' is set to a wrong value.")
 
 (defun cd2/inline-comment-function ()
-  "Function called by `comment-dwim-2' when it is being repeated
-and is encountering an inline comment.  The behavior depends on
-the value of `comment-dwim-2--inline-comment-behavior'"
+  "Function called by `comment-dwim-2' when repeated and at an inline comment.
+The behavior depends on the value of `comment-dwim-2--inline-comment-behavior'"
   (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
     ('reindent-comment (comment-indent))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/prefix-function ()
-  "Function called by `comment-dwim-2' when it is called with a
-prefix argument.  The behavior is the one not chosen by the user
-in `comment-dwim-2--inline-comment-behavior' so it can still be
+  "Function called by `comment-dwim-2' when it is called with a prefix argument.
+The behavior is the one not chosen by the user in
+`comment-dwim-2--inline-comment-behavior' so it can still be
 available."
   (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (comment-indent))
@@ -94,8 +92,7 @@ available."
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/empty-line-p ()
-  "Return true if current line contains only whitespace
-characters."
+  "Return true if current line contains only whitespace characters."
   (string-match "^[[:blank:]]*$"
 		(buffer-substring (line-beginning-position)
 				  (line-end-position))))
@@ -129,8 +126,7 @@ Whitespace characters at the beginning of the line are ignored."
       (cd2/within-comment-p (point)))))
 
 (defun cd2/line-ends-with-multiline-string-p ()
-  "Return true if current line ends inside a multiline string such
-that adding an end-of-line comment is meaningless."
+  "Return true if current line ends inside a multiline string such that adding an end-of-line comment is meaningless."
   (let ((bol  (line-beginning-position))
 	(eol  (line-end-position))
 	(bol2 (line-beginning-position 2)))
@@ -145,8 +141,7 @@ that adding an end-of-line comment is meaningless."
 	(elt (save-excursion (syntax-ppss bol2)) 8)))))
 
 (defun cd2/comment-kill ()
-  "A clone of `comment-kill' which kills only one comment and
-does not re-indent the code."
+  "A clone of `comment-kill' which kills only one comment and does not re-indent the code."
   (comment-normalize-vars)
   (save-excursion
     (beginning-of-line)
