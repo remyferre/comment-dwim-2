@@ -27,7 +27,7 @@
 ;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
 ;; which includes more comment commands than its predecessor and allows to
 ;; comment / uncomment / insert comment / kill comment / indent comment
-;; depending on the context. The command can be repeated several times to
+;; depending on the context.  The command can be repeated several times to
 ;; switch between the different possible behaviors.
 ;;
 ;; # Demonstration
@@ -45,7 +45,7 @@
 ;; # Customization
 ;;
 ;; Contrary to `comment-dwim', `comment-dwim-2' will by default kill an
-;; inline comment if it encounters one when being repeated. If you prefer
+;; inline comment if it encounters one when being repeated.  If you prefer
 ;; the `comment-dwim' behavior (which is to reindent the inline comment),
 ;; set comment-dwim-2--inline-comment-behavior to 'reindent-comment.
 ;;
@@ -61,7 +61,7 @@
 
 (defvar comment-dwim-2--inline-comment-behavior 'kill-comment
   "Behavior of `comment-dwim-2' when it is being repeated and is
-encountering an inline comment. Possible values are:
+encountering an inline comment.  Possible values are:
 
 * 'kill-comment     : Kill the inline comment (default)
 * 'reindent-comment : Reindent the inline comment
@@ -76,7 +76,7 @@ by calling `comment-dwim-2' with a prefix argument.")
 
 (defun cd2/inline-comment-function ()
   "Function called by `comment-dwim-2' when it is being repeated
-and is encountering an inline comment. The behavior depends on
+and is encountering an inline comment.  The behavior depends on
 the value of `comment-dwim-2--inline-comment-behavior'"
   (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
@@ -85,7 +85,7 @@ the value of `comment-dwim-2--inline-comment-behavior'"
 
 (defun cd2/prefix-function ()
   "Function called by `comment-dwim-2' when it is called with a
-prefix argument. The behavior is the one not chosen by the user
+prefix argument.  The behavior is the one not chosen by the user
 in `comment-dwim-2--inline-comment-behavior' so it can still be
 available."
   (cl-case comment-dwim-2--inline-comment-behavior
@@ -177,14 +177,14 @@ does not re-indent the code."
 If the region is active, call `comment-or-uncomment-region' to
 toggle comments.
 Else, the function applies to the current line and calls a
-different function at each successive call. The behavior is:
+different function at each successive call.  The behavior is:
 * First  call : Toggle line commenting
 * Second call : - Kill inline comment if one is present (1)
                 - Insert inline comment otherwise
 Given an argument, it reindents the inline comment instead (2).
 
 Please note that the behavior of `comment-dwim-2' when
-encountering an inline comment can be customized. Setting
+encountering an inline comment can be customized.  Setting
 `comment-dwim-2--inline-comment-behavior' to 'reindent-comment
 will swap (1) and (2)."
   (interactive "P")
