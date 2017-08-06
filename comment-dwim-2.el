@@ -112,7 +112,7 @@ Whitespace characters at the beginning of the line are ignored."
 		       (line-end-position))))
 
 (defun cd2/within-comment-p (pos)
-  "Return true if content at given position is within a comment."
+  "Return true if content at given position (POS) is within a comment."
   (or (eq font-lock-comment-face
 	  (get-text-property pos 'face))
       (eq font-lock-comment-delimiter-face
