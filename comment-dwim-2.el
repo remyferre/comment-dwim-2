@@ -181,7 +181,7 @@ different function at each successive call.  The behavior is:
 * First  call : Toggle line commenting
 * Second call : - Kill inline comment if one is present (1)
                 - Insert inline comment otherwise
-Given an argument, it reindents the inline comment instead (2).
+Given an argument ARG, it reindents the inline comment instead (2).
 
 Please note that the behavior of `comment-dwim-2' when
 encountering an inline comment can be customized.  Setting
