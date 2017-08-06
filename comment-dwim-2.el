@@ -126,7 +126,7 @@ Whitespace characters at the beginning of the line are ignored."
       (cd2/within-comment-p (point)))))
 
 (defun cd2/line-ends-with-multiline-string-p ()
-  "Return true if current line ends inside a multiline string such that adding an end-of-line comment is meaningless."
+  "Return true if current line ends inside a multiline string such that adding an end of line comment is meaningless."
   (let ((bol  (line-beginning-position))
 	(eol  (line-end-position))
 	(bol2 (line-beginning-position 2)))
