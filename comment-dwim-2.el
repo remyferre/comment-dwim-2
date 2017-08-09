@@ -27,7 +27,7 @@
 ;; This package provides a replacement for `comment-dwim', `comment-dwim-2',
 ;; which includes more comment commands than its predecessor and allows to
 ;; comment / uncomment / insert comment / kill comment / indent comment
-;; depending on the context. The command can be repeated several times to
+;; depending on the context.  The command can be repeated several times to
 ;; switch between the different possible behaviors.
 ;;
 ;; # Demonstration
@@ -45,7 +45,7 @@
 ;; # Customization
 ;;
 ;; Contrary to `comment-dwim', `comment-dwim-2' will by default kill an
-;; inline comment if it encounters one when being repeated. If you prefer
+;; inline comment if it encounters one when being repeated.  If you prefer
 ;; the `comment-dwim' behavior (which is to reindent the inline comment),
 ;; set comment-dwim-2--inline-comment-behavior to 'reindent-comment.
 ;;
@@ -60,8 +60,8 @@
 (require 'cl-lib)
 
 (defvar comment-dwim-2--inline-comment-behavior 'kill-comment
-  "Behavior of `comment-dwim-2' when it is being repeated and is
-encountering an inline comment. Possible values are:
+  "Behavior of `comment-dwim-2' when repeated and at an inline comment.
+Possible values are:
 
 * 'kill-comment     : Kill the inline comment (default)
 * 'reindent-comment : Reindent the inline comment
@@ -71,22 +71,20 @@ by calling `comment-dwim-2' with a prefix argument.")
 
 (defvar cd2/inline-comment-behavior--wrong-value
   "Error: `comment-dwim-2--inline-comment-behavior' has an unknown value. Probably a typo."
-  "Error message displayed when
-`comment-dwim-2--inline-comment-behavior' is set to a wrong value")
+  "Error message displayed when `comment-dwim-2--inline-comment-behavior' is set to a wrong value.")
 
 (defun cd2/inline-comment-function ()
-  "Function called by `comment-dwim-2' when it is being repeated
-and is encountering an inline comment. The behavior depends on
-the value of `comment-dwim-2--inline-comment-behavior'"
+  "Function called by `comment-dwim-2' when repeated and at an inline comment.
+The behavior depends on the value of `comment-dwim-2--inline-comment-behavior'"
   (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (cd2/comment-kill))
     ('reindent-comment (comment-indent))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/prefix-function ()
-  "Function called by `comment-dwim-2' when it is called with a
-prefix argument. The behavior is the one not chosen by the user
-in `comment-dwim-2--inline-comment-behavior' so it can still be
+  "Function called by `comment-dwim-2' when it is called with a prefix argument.
+The behavior is the one not chosen by the user in
+`comment-dwim-2--inline-comment-behavior' so it can still be
 available."
   (cl-case comment-dwim-2--inline-comment-behavior
     ('kill-comment     (comment-indent))
@@ -94,32 +92,31 @@ available."
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/empty-line-p ()
-  "Return true if current line contains only whitespace
-characters."
+  "Return true if current line contains only whitespace characters."
   (string-match "^[[:blank:]]*$"
 		(buffer-substring (line-beginning-position)
 				  (line-end-position))))
 
 (defun cd2/fully-commented-line-p ()
-  "Returns true if current line is commented from its beginning.
+  "Return true if current line is commented from its beginning.
 Whitespace characters at the beginning of the line are ignored."
   (interactive)
   (and (not (cd2/empty-line-p))
        (comment-only-p (save-excursion
-		    (move-beginning-of-line 1)
-		    (skip-chars-forward " \t")
-		    (point))
-		  (line-end-position))))
+			 (move-beginning-of-line 1)
+			 (skip-chars-forward " \t")
+			 (point))
+		       (line-end-position))))
 
 (defun cd2/within-comment-p (pos)
-  "Returns true if content at given position is within a comment."
+  "Return true if content at given position (POS) is within a comment."
   (or (eq font-lock-comment-face
 	  (get-text-property pos 'face))
       (eq font-lock-comment-delimiter-face
 	  (get-text-property pos 'face))))
 
 (defun cd2/line-contains-comment-p ()
-  "Returns true if current line contains a comment."
+  "Return true if current line contains a comment."
   (let ((eol (line-end-position)))
     (save-excursion
       (move-beginning-of-line 1)
@@ -129,8 +126,7 @@ Whitespace characters at the beginning of the line are ignored."
       (cd2/within-comment-p (point)))))
 
 (defun cd2/line-ends-with-multiline-string-p ()
-  "Return true if current line ends inside a multiline string such
-that adding an end-of-line comment is meaningless."
+  "Return true if current line ends inside a multiline string such that adding an end of line comment is meaningless."
   (let ((bol  (line-beginning-position))
 	(eol  (line-end-position))
 	(bol2 (line-beginning-position 2)))
@@ -145,8 +141,7 @@ that adding an end-of-line comment is meaningless."
 	(elt (save-excursion (syntax-ppss bol2)) 8)))))
 
 (defun cd2/comment-kill ()
-  "A clone of `comment-kill' which kills only one comment and
-does not re-indent the code."
+  "A clone of `comment-kill' which kills only one comment and does not re-indent the code."
   (comment-normalize-vars)
   (save-excursion
     (beginning-of-line)
@@ -177,14 +172,14 @@ does not re-indent the code."
 If the region is active, call `comment-or-uncomment-region' to
 toggle comments.
 Else, the function applies to the current line and calls a
-different function at each successive call. The behavior is:
+different function at each successive call.  The behavior is:
 * First  call : Toggle line commenting
 * Second call : - Kill inline comment if one is present (1)
                 - Insert inline comment otherwise
-Given an argument, it reindents the inline comment instead (2).
+Given an argument ARG, it reindents the inline comment instead (2).
 
 Please note that the behavior of `comment-dwim-2' when
-encountering an inline comment can be customized. Setting
+encountering an inline comment can be customized.  Setting
 `comment-dwim-2--inline-comment-behavior' to 'reindent-comment
 will swap (1) and (2)."
   (interactive "P")
