@@ -8,6 +8,7 @@
      (with-temp-buffer
        (switch-to-buffer (current-buffer))
        (c-mode)
+	   (transient-mark-mode)
        (font-lock-mode)
        (insert ,buffer-content)
        (font-lock-fontify-buffer)
@@ -15,6 +16,7 @@
        (setq last-command nil)
        (goto-char (point-min))
        (setq comment-dwim-2--inline-comment-behavior 'kill-comment)
+	   (setq cd2/region-command 'cd2/comment-or-uncomment-lines-or-region-dwim)
        ,@body)))
 
 (defmacro cd2/test-setup--with-reindent (buffer-content &rest body)
@@ -63,6 +65,35 @@
   (cd2/test-setup " \"Foo\nBar\""    (should (cd2/line-ends-with-multiline-string-p))))
 
 ;;; comment-dwim-2 tests
+
+;; cd2/region-command
+
+(ert-deftest cd2/test-comment-or-uncomment-lines-or-region-dwim ()
+  (cd2/test-setup "First line\nSecond line"
+   (should (eq cd2/region-command 'cd2/comment-or-uncomment-lines-or-region-dwim))
+   (set-mark 6) (goto-char 15)
+   (comment-dwim-2) (should-buffer "/* First line */\n/* Second line */")
+   (comment-dwim-2) (should-buffer "First line\nSecond line")
+   (lisp-mode)
+   (set-mark 6) (goto-char 15)
+   (comment-dwim-2) (should-buffer "First;;  line\n;; Sec\nond line")))
+
+(ert-deftest cd2/test-comment-or-uncomment-region ()
+  (cd2/test-setup "First line\nSecond line"
+   (setq cd2/region-command 'cd2/comment-or-uncomment-region)
+   (set-mark 6) (goto-char 15)
+   (comment-dwim-2) (should-buffer "First/*  line */\n/* Sec */ond line")
+   (comment-dwim-2) (should-buffer "First line\nSecond line")))
+
+(ert-deftest cd2/test-comment-or-uncomment-lines ()
+  (cd2/test-setup "First line\nSecond line"
+   (setq cd2/region-command 'cd2/comment-or-uncomment-lines)
+   (set-mark 6) (goto-char 15)
+   (comment-dwim-2) (should-buffer "/* First line */\n/* Second line */")
+   (comment-dwim-2) (should-buffer "First line\nSecond line")
+   (lisp-mode)
+   (set-mark 6) (goto-char 15)
+   (comment-dwim-2) (should-buffer ";; First line\n;; Second line")))
 
 ;; comment-dwim-2--inline-comment-behavior == 'kill-comment
 
