@@ -52,13 +52,13 @@ This package can be installed from [MELPA](http://melpa.org/#/).
 
 # Customization
 
-When commenting a region, `comment-dwim-2` will by default "expand" it to comment the entirety of lines covered by the region:
-In Lisp modes, however, `comment-dwim-2` won't try to expand the region as it could easily lead to unbalanced parentheses.
+When commenting a region, `comment-dwim-2` will by default comment the entirety of the lines that the region spans (i.e. a line will be fully commented even if it is partly selected):
+In Lisp modes, however, `comment-dwim-2` will strictly comment the region as commenting whole lines could easily lead to unbalanced parentheses.
 
-If you never want to expand the region, add this to your configuration file:
-
-	(setq cd2/region-command 'cd2/comment-or-uncomment-region)
-
-If you always want to expand the region (Lisp modes included):
+If you always want to fully comment lines (Lisp modes included), add this to your configuration file:
 
 	(setq cd2/region-command 'cd2/comment-or-uncomment-lines)
+
+If you only want to comment the selected region (like `comment-dwim` does), add this:
+
+	(setq cd2/region-command 'cd2/comment-or-uncomment-region)

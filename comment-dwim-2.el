@@ -45,21 +45,22 @@
 ;;
 ;; ## Commenting region
 ;;
-;; When commenting a region, `comment-dwim-2' will by default "expand"
-;; it to comment the entirety of lines covered by the region (i.e. a
-;; line will be entirely commented even if the point or mark is in the
-;; middle of that line).  This makes it easier to comment blocks of
-;; code. In Lisp modes, however, `comment-dwim-2' won't try to expand
-;; the region as it could easily lead to unbalanced parentheses. You
-;; can customize this behavior using `cd2/region-command'.
+;; When commenting a region, `comment-dwim-2' will by default comment
+;; the entirety of the lines that the region spans (i.e. a line will
+;; be fully commented even if it is partly selected).  In Lisp modes,
+;; however, `comment-dwim-2' will strictly comment the region as
+;; commenting whole lines could easily lead to unbalanced parentheses.
+;; You can customize this behavior.
 ;;
-;; If you never want to expand the region, use this:
-;;
-;;   (setq cd2/region-command 'cd2/comment-or-uncomment-region)
-;;
-;; If you always want to expand the region (Lisp modes included):
+;; If you always want to fully comment lines (Lisp modes included),
+;; add this to your configuration file:
 ;;
 ;;   (setq cd2/region-command 'cd2/comment-or-uncomment-lines)
+;;
+;; If you only want to comment the selected region (like
+;; `comment-dwim' does), add this:
+;;
+;;   (setq cd2/region-command 'cd2/comment-or-uncomment-region)
 ;;
 ;; ## Behavior when command is repeated
 ;;
@@ -113,7 +114,7 @@ available."
   (comment-or-uncomment-region (region-beginning) (region-end)))
 
 (defun cd2/comment-or-uncomment-lines ()
-  "Toggle commenting on lines delimited by the point and the mark."
+  "Toggle commenting on all the lines that the region spans."
   (if (eq (line-number-at-pos (point))
 		  (line-number-at-pos (mark)))
 	  (cd2/comment-or-uncomment-region)
@@ -124,8 +125,8 @@ available."
 (defun cd2/comment-or-uncomment-lines-or-region-dwim ()
   "Toggle commenting on lines or region depending on the mode.
 
-In most modes, the command will toggle commenting on lines
-delimited by the point and the mark.
+In most modes, the command will toggle commenting on all the lines
+that the region spans.
 In Lisp-derived modes, however, the command applies strictly to the
 region, as commenting whole lines would often results with
 unbalanced parentheses."
