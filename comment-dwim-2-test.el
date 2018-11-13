@@ -95,6 +95,18 @@
    (set-mark 6) (goto-char 15)
    (comment-dwim-2) (should-buffer ";; First line\n;; Second line")))
 
+(ert-deftest cd2/test-comment-region-that-spans-one-line ()
+  (cd2/test-setup ""
+   (dolist (region-command
+			'(cd2/comment-or-uncomment-lines-or-region-dwim
+			  cd2/comment-or-uncomment-region
+			  cd2/comment-or-uncomment-lines))
+	 (progn
+	   (setq cd2/region-command region-command)
+	   (kill-region (point-min) (point-max)) (insert "This is a line")
+	   (set-mark 3) (goto-char 10)
+	   (comment-dwim-2) (should-buffer "Th/* is is a */ line")))))
+
 ;; comment-dwim-2--inline-comment-behavior == 'kill-comment
 
 (ert-deftest cd2/test-comment-dwim-2--uncommented-line ()

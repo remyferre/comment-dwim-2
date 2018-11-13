@@ -114,9 +114,12 @@ available."
 
 (defun cd2/comment-or-uncomment-lines ()
   "Toggle commenting on lines delimited by the point and the mark."
-  (comment-or-uncomment-region
-   (save-excursion (goto-char (region-beginning)) (line-beginning-position))
-   (save-excursion (goto-char (region-end)) (line-end-position))))
+  (if (eq (line-number-at-pos (point))
+		  (line-number-at-pos (mark)))
+	  (cd2/comment-or-uncomment-region)
+	(comment-or-uncomment-region
+	 (save-excursion (goto-char (region-beginning)) (line-beginning-position))
+	 (save-excursion (goto-char (region-end)) (line-end-position)))))
 
 (defun cd2/comment-or-uncomment-lines-or-region-dwim ()
   "Toggle commenting on lines or region depending on the mode.
