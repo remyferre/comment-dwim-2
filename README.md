@@ -53,7 +53,9 @@ This package can be installed from [MELPA](http://melpa.org/#/).
 # Customization
 
 When commenting a region, `comment-dwim-2` will by default comment the entirety of the lines that the region spans (i.e. a line will be fully commented even if it is partly selected):
+![comment-dwim-2 comment lines even if they are partly selected](http://remyferre.github.io/images/cd2-region-expand.gif)
 In Lisp modes, however, `comment-dwim-2` will strictly comment the region as commenting whole lines could easily lead to unbalanced parentheses.
+![region commenting in Lisp modes](http://remyferre.github.io/images/cd2-region-lisp.gif)
 
 If you always want to fully comment lines (Lisp modes included), add this to your configuration file:
 
