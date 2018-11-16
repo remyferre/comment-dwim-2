@@ -1,6 +1,6 @@
 # Comment-dwim-2
 
-`comment-dwim-2` is a replacement for the Emacs' built-in command `comment-dwim`, which includes more features, and allows you to:
+`comment-dwim-2` is a replacement for the Emacs' built-in command `comment-dwim`, which includes more features and allows you to:
 
 * comment/uncomment the current line (or region, if active)
 * insert/kill end-of-line comments
