@@ -1,23 +1,22 @@
 # Comment-dwim-2
 
-`comment-dwim-2` is a replacement for the Emacs' built-in command `comment-dwim` which includes more comment features, including:
+`comment-dwim-2` is a replacement for the Emacs' built-in command `comment-dwim`, which includes more features and allows you to:
 
-* commenting/uncommenting the current line (or region, if active)
-* inserting an inline comment
-* killing the inline comment
-* reindenting the inline comment
+* comment/uncomment the current line (or region, if active)
+* insert/kill end-of-line comments
+* reindent end-of-line comments
 
-As its name suggests, `comment-dwim-2` picks one behavior depending on the context but contrary to `comment-dwim` **can also be repeated several times to switch between the different behaviors**.
+`comment-dwim-2` picks one behavior depending on the context but **can also be repeated several times to switch between the different possible behaviors**.
 
 # Demo
 
-`comment-dwim-2` repeated 3 times:
+`comment-dwim-2` used 3 times in a row:
 
 ![general behavior of comment-dwim-2](http://remyferre.github.io/images/cd2-general.gif)
 
 # How to use
 
-`comment-dwim-2` is not bound to any key, so you need to set up you own keybinding first. For instance:
+You need to add your own key binding first, for instance:
 
     (global-set-key (kbd "M-;") 'comment-dwim-2)
 
@@ -39,22 +38,32 @@ This package can be installed from [MELPA](http://melpa.org/#/).
 
 ![uncommenting current line with comment-dwim-2](http://remyferre.github.io/images/cd2-uncomment.gif)
 
-## Insert comment (repeated twice)
+## Insert comment (repeat the command)
 
 ![inserting comment with comment-dwim-2](http://remyferre.github.io/images/cd2-insert-comment.gif)
 
-## Kill comment (repeated twice)
+## Kill comment (repeat the command)
 
 ![killing comment with comment-dwim-2](http://remyferre.github.io/images/cd2-kill-comment.gif)
 
-## Reindent comment (called with a prefix argument)
+## Reindent comment (call the command with a prefix argument)
 
 ![reindenting comment with comment-dwim-2](http://remyferre.github.io/images/cd2-reindent-comment.gif)
 
 # Customization
 
-An alternative behavior closer to what `comment-dwim` does is available. To use it, add this to your init file:
+When commenting a region, `comment-dwim-2` will by default comment the entirety of the lines that the region spans (i.e. a line will be fully commented even if it is partly selected):
 
-	(setq comment-dwim-2--inline-comment-behavior 'reindent-comment)
+![comment-dwim-2 comment lines even if they are partly selected](http://remyferre.github.io/images/cd2-region-expand.gif)
 
-It basically swaps the killing and reindenting behavior, which means that repeating `comment-dwim-2` will by default reindent the comment instead of killing it, and that calling `comment-dwim-2` with a prefix argument will kill the comment instead of reindenting it.
+In Lisp modes, however, `comment-dwim-2` will strictly comment the region as commenting whole lines could easily lead to unbalanced parentheses.
+
+![region commenting in Lisp modes](http://remyferre.github.io/images/cd2-region-lisp.gif)
+
+If you always want to fully comment lines (Lisp modes included), add this to your configuration file:
+
+	(setq cd2/region-command 'cd2/comment-or-uncomment-lines)
+
+If you only want to comment the selected region (like `comment-dwim` does), add this:
+
+	(setq cd2/region-command 'cd2/comment-or-uncomment-region)
