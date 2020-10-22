@@ -82,6 +82,8 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'org)
+(require 'ob-core)
 
 (defvar comment-dwim-2--inline-comment-behavior 'kill-comment
   "Behavior of `comment-dwim-2' when repeated and at an inline comment.
