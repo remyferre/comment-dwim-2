@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014-2019  Rémy Ferré
 
 ;; Author: Rémy Ferré <dev@remyferre.net>
-;; Version: 1.3.0
+;; Version: 1.4.0
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
@@ -61,6 +61,12 @@
 ;; `comment-dwim' does), add this:
 ;;
 ;;   (setq cd2/region-command 'cd2/comment-or-uncomment-region)
+;;
+;; # Org-mode
+;;
+;; For org-mode, consider using `org-comment-dwim-2':
+;;
+;;   (define-key org-mode-map (kbd "M-;") 'org-comment-dwim-2)
 ;;
 ;; ## Behavior when command is repeated
 ;;
@@ -159,15 +165,20 @@ Whitespace characters at the beginning of the line are ignored."
 						 (point))
 					   (line-end-position))))
 
+(defun cd2/face-is-at-pos-p (pos faces)
+  "Return true if one of the given faces is at pos."
+  (let* ((face-property (get-text-property pos 'face))
+		 (faces-at-point (if (listp face-property) face-property (list face-property))))
+	(cl-some (lambda (face) (member face faces-at-point)) faces)))
+
 (defun cd2/within-comment-p (pos)
   "Return true if content at given position (POS) is within a comment."
-  (or (eq font-lock-comment-face
-		  (get-text-property pos 'face))
-      (eq font-lock-comment-delimiter-face
-		  (get-text-property pos 'face))))
+  (cd2/face-is-at-pos-p pos '(font-lock-comment-face
+							  font-lock-comment-delimiter-face)))
 
 (defun cd2/line-contains-comment-p ()
   "Return true if current line contains a comment."
+  (font-lock-fontify-region (line-beginning-position) (line-end-position))
   (let ((eol (line-end-position)))
     (save-excursion
       (move-beginning-of-line 1)
@@ -185,8 +196,8 @@ Whitespace characters at the beginning of the line are ignored."
      ;; End of line have string face..
      (save-excursion
        (font-lock-fontify-region bol eol)
-       (or (eq font-lock-string-face (get-text-property eol 'face))
-		   (eq font-lock-doc-face    (get-text-property eol 'face))))
+	   (cd2/face-is-at-pos-p eol '(font-lock-string-face
+								   font-lock-doc-face)))
      ;; ..and next line contains a string which begins at the same position
      (= (elt (save-excursion (syntax-ppss eol )) 8)
 		(elt (save-excursion (syntax-ppss bol2)) 8)))))
@@ -231,7 +242,7 @@ Given an argument ARG, it reindents the inline comment instead (2).
 
 You can also switch behaviors of (1) and (2) by setting
 `comment-dwim-2--inline-comment-behavior' to 'reindent-comment."
-  (interactive "P")
+  (interactive "*P")
   (if (use-region-p)
 	  (funcall cd2/region-command)
 	(if arg
@@ -239,7 +250,8 @@ You can also switch behaviors of (1) and (2) by setting
       (if (cd2/fully-commented-line-p)
 		  (progn
 			(cd2/uncomment-line)
-			(when (and (eq last-command 'comment-dwim-2)
+			(when (and (or (eq last-command 'comment-dwim-2)
+						   (eq last-command 'org-comment-dwim-2))
 					   (not (cd2/empty-line-p))
 					   (not (cd2/line-ends-with-multiline-string-p))
 					   (not (cd2/fully-commented-line-p)))
@@ -247,9 +259,18 @@ You can also switch behaviors of (1) and (2) by setting
 				  (cd2/inline-comment-command)
 				(comment-indent)))) ; Insert inline comment
 		(if (and (cd2/line-contains-comment-p)
-				 (eq last-command 'comment-dwim-2))
+				 (or (eq last-command 'comment-dwim-2)
+					 (eq last-command 'org-comment-dwim-2)))
 			(cd2/inline-comment-command)
 		  (cd2/comment-line))))))
+
+;;;###autoload
+(defun org-comment-dwim-2 (&optional arg)
+  "Call `comment-dwim-2' inside source blocks. Else, fallback to `org-toggle-comment'."
+  (interactive "*P")
+  (if (org-in-src-block-p t)
+      (org-babel-do-in-edit-buffer (call-interactively 'comment-dwim-2))
+    (call-interactively 'org-toggle-comment)))
 
 (provide 'comment-dwim-2)
 ;;; comment-dwim-2.el ends here

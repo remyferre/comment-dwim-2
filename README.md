@@ -20,6 +20,10 @@ You need to add your own key binding first, for instance:
 
     (global-set-key (kbd "M-;") 'comment-dwim-2)
 
+If you use org-mode, consider using `org-comment-dwim-2` to comment within source blocks:
+
+	(define-key org-mode-map (kbd "M-;") 'org-comment-dwim-2)
+
 # Installation
 
 This package can be installed from [MELPA](http://melpa.org/#/).
