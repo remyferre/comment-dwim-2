@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014-2019  Rémy Ferré
 
 ;; Author: Rémy Ferré <dev@remyferre.net>
-;; Version: 1.4.0
+;; Version: 1.4.1
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
@@ -180,14 +180,15 @@ Whitespace characters at the beginning of the line are ignored."
 
 (defun cd2/line-contains-comment-p ()
   "Return true if current line contains a comment."
-  (font-lock-fontify-region (line-beginning-position) (line-end-position))
+  (save-excursion
+	(font-lock-fontify-region (line-beginning-position) (line-end-position)))
   (let ((eol (line-end-position)))
-    (save-excursion
-      (move-beginning-of-line 1)
-      (while (and (/= (point) eol)
- 				  (not (cd2/within-comment-p (point))))
- 		(forward-char))
-      (cd2/within-comment-p (point)))))
+	(save-excursion
+	  (move-beginning-of-line 1)
+	  (while (and (/= (point) eol)
+				  (not (cd2/within-comment-p (point))))
+		(forward-char))
+	  (cd2/within-comment-p (point)))))
 
 (defun cd2/line-ends-with-multiline-string-p ()
   "Return true if current line ends inside a multiline string such that adding an end-of-line comment is meaningless."
