@@ -128,7 +128,10 @@ available."
 	  (cd2/comment-or-uncomment-region)
 	(comment-or-uncomment-region
 	 (save-excursion (goto-char (region-beginning)) (line-beginning-position))
-	 (save-excursion (goto-char (region-end)) (line-end-position)))))
+	 (if (= (region-end)
+			(save-excursion (goto-char (region-end)) (line-beginning-position)))
+		 (- (region-end) 1)
+	   (save-excursion (goto-char (region-end)) (line-end-position))))))
 
 (defun cd2/comment-or-uncomment-lines-or-region-dwim ()
   "Toggle commenting on lines or region depending on the mode.
