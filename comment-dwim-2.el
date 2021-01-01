@@ -3,7 +3,8 @@
 ;; Copyright (C) 2014-2019  Rémy Ferré
 
 ;; Author: Rémy Ferré <dev@remyferre.net>
-;; Version: 1.4.2
+;; Version: 1.4.3
+;; Package-Requires: ((emacs "24.4"))
 ;; URL: https://github.com/remyferre/comment-dwim-2
 ;; Keywords: convenience
 
