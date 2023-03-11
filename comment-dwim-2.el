@@ -90,8 +90,8 @@
   "Behavior of `comment-dwim-2' when repeated and at an inline comment.
 Possible values are:
 
-* 'kill-comment     : Kill the inline comment (default)
-* 'reindent-comment : Reindent the inline comment
+* \\='kill-comment     : Kill the inline comment (default)
+* \\='reindent-comment : Reindent the inline comment
 
 When a behavior is chosen, the other one is still made available
 by calling `comment-dwim-2' with a prefix argument.")
@@ -248,7 +248,7 @@ different function at each successive call.  The algorithm is:
 Given an argument ARG, it reindents the inline comment instead (2).
 
 You can also switch behaviors of (1) and (2) by setting
-`comment-dwim-2--inline-comment-behavior' to 'reindent-comment."
+`comment-dwim-2--inline-comment-behavior' to \\='reindent-comment."
   (interactive "*P")
   (if (use-region-p)
 	  (funcall cd2/region-command)
