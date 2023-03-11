@@ -104,8 +104,8 @@ by calling `comment-dwim-2' with a prefix argument.")
   "Command called by `comment-dwim-2' when repeated and at an inline comment.
 The behavior depends on the value of `comment-dwim-2--inline-comment-behavior'"
   (cl-case comment-dwim-2--inline-comment-behavior
-    ('kill-comment     (cd2/comment-kill))
-    ('reindent-comment (comment-indent))
+    (kill-comment     (cd2/comment-kill))
+    (reindent-comment (comment-indent))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/prefix-command ()
@@ -114,8 +114,8 @@ The behavior is the one not chosen by the user in
 `comment-dwim-2--inline-comment-behavior' so it can still be
 available."
   (cl-case comment-dwim-2--inline-comment-behavior
-    ('kill-comment     (comment-indent))
-    ('reindent-comment (cd2/comment-kill))
+    (kill-comment     (comment-indent))
+    (reindent-comment (cd2/comment-kill))
     (t (user-error cd2/inline-comment-behavior--wrong-value))))
 
 (defun cd2/comment-or-uncomment-region ()
